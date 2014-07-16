@@ -108,7 +108,6 @@ namespace CPF
 		public: int    GetBuriedHolesForColumn( int x ); // 0..(mHeight-1)
 		public: int    GetBlanksDownBeforeBlockedForColumn( int x, int topY ); // 0..topY
 		public: int    GetAllWellsForColumn( int x ); // 0..O(mHeight*mHeight)
-		public: double GetWideWells( ); // 0..O(mHeight*mHeight)
 
 
 		public: int IsGoalAcceptable
