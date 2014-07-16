@@ -19,3 +19,22 @@
 *.exe
 *.out
 *.app
+*.lnk
+
+# Others
+*.suo
+*.user
+*.dat
+*.swp
+*.txt
+*.dtd
+*.pdb
+*.idb
+*.ilk
+*.manifest
+*.dep
+*.ncb
+Debug
+Release
+*~
+

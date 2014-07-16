@@ -108,7 +108,12 @@ namespace CPF
 				// Core Game Controls
 		public: void   InputEvent_Left   ( );
 		public: void   InputEvent_Right  ( );
+		public: void   InputEvent_Down  ( );
+		public: void   InputEvent_ZeroLeft   ( );
+		public: void   InputEvent_ZeroRight  ( );
+		public: void   InputEvent_ZeroDown  ( );
 		public: void   InputEvent_Rotate ( );
+		public: void   InputEvent_CounterRotate ( );
 		public: void   InputEvent_Drop   ( );
 				// Basic Game Management
 		public: void   InputEvent_Reset  ( );
@@ -157,7 +162,7 @@ namespace CPF
 
 				// Access to Statistics
 
-		public: int    GetScore( ) 
+		public: LongLong GetScore( ) 
 				{ 
 					return( mGameState.mScore ); 
 				}
@@ -191,24 +196,39 @@ namespace CPF
 					);
 				}
 
+		public: double GetPileHeightBeta( )
+				{
+					return mGameState.mPileHeightBeta;
+				}
+
+		public: int GetPileHeightBetaSamples( )
+				{
+					return mGameState.mPileHeightBetaSamples;
+				}
+
 		public: int GetHistoricTotalGames ( )
 				{ 
 					return( mGameState.mHistoricTotalGames ); 
 				}
 
-		public: int GetHistoricAverageRows( )
+		public: LongLong GetHistoricAverageRows( )
 				{
 					if (mGameState.mHistoricTotalGames <= 0) return(0);
 					return( mGameState.mHistoricCumulativeRows / mGameState.mHistoricTotalGames );
 				}
 
-		public: int   GetHistoricHighScore ( ) { return( mGameState.mHistoricHighScore  ); }
+		public: LongLong GetHistoricHighScore ( ) { return( mGameState.mHistoricHighScore  ); }
 		public: int   GetHistoricHighRows  ( ) { return( mGameState.mHistoricHighRows   ); }
+		public: double   GetHistoricRowsAtBottom  ( )
+				{
+					if ( mGameState.mHeightHistogram[200] <= 0 ) return 0;
+					return (double)( mGameState.mHeightHistogram[0] + mGameState.mHeightHistogram[1] ) / mGameState.mHeightHistogram[200] ;
+				}
 		public: int   GetHistoricHighPieces( ) { return( mGameState.mHistoricHighPieces ); }
-		public: int   GetHistoricCumulativeRows( ) { return( mGameState.mHistoricCumulativeRows ); }
+		public: LongLong   GetHistoricCumulativeRows( ) { return( mGameState.mHistoricCumulativeRows ); }
 
 
-		public: int   GetHeightHistogramBinValue( int height )
+		public: LongLong GetHeightHistogramBinValue( int height )
 				{
 					if (height <    0) return(0);
 					if (height >= 200) return(0);
@@ -427,7 +447,9 @@ namespace CPF
 
 		private: void   PrivateSpawnPiece( ); // Might cause "game over" flag
 		private: void   PrivateRotatePiece( ); // Succeeds if allowed
-		private: void   PrivateTranslatePiece( int horizontalDirectionSign ); // Succeeds if allowed
+		private: void   PrivateCounterRotatePiece( ); // Succeeds if allowed
+		private: int    PrivateTranslatePiece( int horizontalDirectionSign ); // Succeeds if allowed
+		private: int    PrivateVTranslatePiece( ); // Succeeds if allowed
 		private: void   PrivateFreeFallPiece( ); // Decrements point value, possible landing
 		private: void   PrivateDropPiece( );  // Translates piece as far as it will fall and lands it
 		private: void   PrivateTransferPieceToPile( ); // Actually puts cells in to board, updates score, clears piece

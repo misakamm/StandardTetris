@@ -33,8 +33,10 @@ namespace CPF
 		void STPieceSequence::PrivateAdvanceRandom ( )
 		{
 			int pieceShapeIndexCurrent = 0;
-			pieceShapeIndexCurrent = 
-				(*this).mSTRandom.GetIntegerInRangeUsingCurrentState( 1, 7 );
+			if ( mCachedSelectedPieceShapeNext == STPiece::None )
+				mCachedSelectedPieceShapeNext = (*this).mSTRandom.GetIntegerInRangeUsingCurrentState( 1, 7 );
+			pieceShapeIndexCurrent = mCachedSelectedPieceShapeNext;
+				//(*this).mSTRandom.GetIntegerInRangeUsingCurrentState( 1, 7 );
 
 			(*this).mSTRandom.Advance( );
 
@@ -165,8 +167,8 @@ namespace CPF
 
 		void STPieceSequence::ClientRequestSelectionUpdate ( )
 		{
-			(*this).mCachedSelectedPieceShapeCurrent = STPiece::None;
-			(*this).mCachedSelectedPieceShapeNext = STPiece::None;
+			//(*this).mCachedSelectedPieceShapeCurrent = STPiece::None;
+			//(*this).mCachedSelectedPieceShapeNext = STPiece::None;
 
 			switch((*this).mPieceSelectionSource)
 			{

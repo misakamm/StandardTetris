@@ -66,10 +66,45 @@ namespace CPF
 
 
 
+		void   STGame::InputEvent_Down  ( )
+		{
+			(*this).PrivateFreeFallPiece( );
+		}
+
+
+
+		void   STGame::InputEvent_ZeroLeft   ( )
+		{
+			while ( (*this).PrivateTranslatePiece( -1 ) );
+		}
+
+
+
+		void   STGame::InputEvent_ZeroRight  ( )
+		{
+			while ( (*this).PrivateTranslatePiece( 1 ) );
+		}
+
+
+
+		void   STGame::InputEvent_ZeroDown  ( )
+		{
+			while ( (*this).PrivateVTranslatePiece( ) );
+		}
+
+
+
 		void   STGame::InputEvent_Rotate ( )
 		{
 			if (mGameState.mOutputToRS232) STRS232::MomentaryRelay_ROTATE();
 			(*this).PrivateRotatePiece();
+		}
+
+
+
+		void   STGame::InputEvent_CounterRotate ( )
+		{
+			(*this).PrivateCounterRotatePiece();
 		}
 
 
@@ -202,14 +237,16 @@ namespace CPF
 
 		void   STGame::InputEvent_GameSpeedIncrease ( )
 		{
-			mGameState.mGameSpeedAdjustment++;
+			if ( mGameState.mGameSpeedAdjustment >= 8 ) mGameState.mGameSpeedAdjustment *= 2;
+			else mGameState.mGameSpeedAdjustment++;
 		}
 
 
 
 		void   STGame::InputEvent_GameSpeedDecrease ( )
 		{
-			mGameState.mGameSpeedAdjustment--;
+			if ( mGameState.mGameSpeedAdjustment > 8 ) mGameState.mGameSpeedAdjustment /= 2;
+			else mGameState.mGameSpeedAdjustment--;
 		}
 
 
@@ -609,6 +646,7 @@ namespace CPF
 				{
 					// We have a piece.  Attempt a free-fall iteration.
 					// Unconditionally reset the countdown.
+					if ( mGameState.mAnimateAIMoves.empty() )
 					(*this).PrivateFreeFallPiece();
 					mGameState.mIterationCountdownSeconds = PrivateGetCountdownInitialValue();
 				}
@@ -692,7 +730,7 @@ namespace CPF
 			}
 
 			n = 200;  
-			for ( i = 0; i < n; i++ ) 
+			for ( i = 0; i <= n; i++ ) 
 			{
 				mGameState.mHeightHistogram[ i ] = 0;
 			}
@@ -733,13 +771,13 @@ namespace CPF
 			if (0 == mGameState.mGameSpeedAdjustment)
 			{
 				// Normal Tetris Speed Rule
-				return( (10.0f - (float)GetCurrentLevel()) / 20.0f );
+				return( (5.0f /*- (float)GetCurrentLevel()*/) / 20.0f );
 			}
 
 			if ((-1) == mGameState.mGameSpeedAdjustment)
 			{
 				// Normal Tetris Speed Rule, but clamped to 0.20
-				float f32_Delay = ( (10.0f - (float)GetCurrentLevel()) / 20.0f );
+				float f32_Delay = ( (20.0f /*- (float)GetCurrentLevel()*/) / 20.0f );
 				if (f32_Delay < 0.20f) f32_Delay = 0.20f;
 				return( f32_Delay );
 			}
@@ -747,7 +785,7 @@ namespace CPF
 			if (mGameState.mGameSpeedAdjustment <= (-2))
 			{
 				// Slowness is proportional to speed adjustment
-				float f32_Delay = ((0.5f) * (-(mGameState.mGameSpeedAdjustment)));
+				float f32_Delay = 10.0f;//((0.5f) * (-(mGameState.mGameSpeedAdjustment)));
 				return( f32_Delay );
 			}
 
@@ -908,11 +946,41 @@ namespace CPF
 
 
 		// Succeeds if allowed
-		void   STGame::PrivateTranslatePiece( int horizontalDirectionSign )
+		void   STGame::PrivateCounterRotatePiece( )
 		{
 			// If current board or piece is invalid, leave.
 			if (0 == mGameState.mSTBoardCurrent.IsValid()) return;
 			if (0 == mGameState.mSTPieceCurrent.IsValid()) return;
+
+			// Copy the current piece to a temporary piece, rotate it, and determine if
+			// it is entirely on the board and does not overlap any occupied cells.
+			STPiece  temp_Piece;
+			temp_Piece.CopyFromPiece( mGameState.mSTPieceCurrent );
+			temp_Piece.RotateByCount(3);
+
+			int okayToRotate = 0;
+			okayToRotate = 
+				mGameState.mSTBoardCurrent.IsGoalAcceptable
+				(
+				temp_Piece
+				);
+
+			if (0 != okayToRotate)
+			{
+				// Rotation acceptable; Rotate actual piece.
+				mGameState.mSTPieceCurrent.RotateByCount(3);
+			}
+		}
+
+
+
+
+		// Succeeds if allowed
+		int    STGame::PrivateTranslatePiece( int horizontalDirectionSign )
+		{
+			// If current board or piece is invalid, leave.
+			if (0 == mGameState.mSTBoardCurrent.IsValid()) return 0;
+			if (0 == mGameState.mSTPieceCurrent.IsValid()) return 0;
 
 			// Copy the current piece to a temporary piece, translate it, and determine
 			// if it is entirely on the board and does not overlap any occupied cells.
@@ -938,6 +1006,33 @@ namespace CPF
 				else
 					mGameState.mSTPieceCurrent.Translate(  1, 0 );
 			}
+			return okayToTranslate;
+		}
+		// Succeeds if allowed
+		int    STGame::PrivateVTranslatePiece( )
+		{
+			// If current board or piece is invalid, leave.
+			if (0 == mGameState.mSTBoardCurrent.IsValid()) return 0;
+			if (0 == mGameState.mSTPieceCurrent.IsValid()) return 0;
+
+			// Copy the current piece to a temporary piece, translate it, and determine
+			// if it is entirely on the board and does not overlap any occupied cells.
+			STPiece  temp_Piece;
+			temp_Piece.CopyFromPiece( mGameState.mSTPieceCurrent );
+			temp_Piece.Translate( 0, -1 );
+
+			int okayToTranslate = 0;
+			okayToTranslate = 
+				mGameState.mSTBoardCurrent.IsGoalAcceptable
+				(
+				temp_Piece
+				);
+
+			if (0 != okayToTranslate)
+			{
+				mGameState.mSTPieceCurrent.Translate( 0, -1 );
+			}
+			return okayToTranslate;
 		}
 
 
@@ -1007,9 +1102,13 @@ namespace CPF
 
 			// Increment pile height bin
 			int resultingPileHeight = 0;
-			resultingPileHeight = mGameState.mSTBoardCurrent.PileMaxHeight();
+			resultingPileHeight = mGameState.mSTBoardCurrent.PileAvgHeight();
 			if ((resultingPileHeight >= 0) && (resultingPileHeight < 200))
+			{
 				mGameState.mHeightHistogram[ resultingPileHeight ]++;
+				mGameState.mHeightHistogram[200]++;
+			}
+			mGameState.mPileHeightBeta = mGameState.mSTBoardCurrent.PileHeightBeta( mGameState.mHeightHistogram, &mGameState.mPileHeightBetaSamples );
 		}
 
 
@@ -1044,9 +1143,13 @@ namespace CPF
 
 			// Increment pile height bin
 			int resultingPileHeight = 0;
-			resultingPileHeight = mGameState.mSTBoardCurrent.PileMaxHeight();
+			resultingPileHeight = mGameState.mSTBoardCurrent.PileAvgHeight();
 			if ((resultingPileHeight >= 0) && (resultingPileHeight < 200))
+			{
 				mGameState.mHeightHistogram[ resultingPileHeight ]++;
+				mGameState.mHeightHistogram[200]++;
+			}
+			mGameState.mPileHeightBeta = mGameState.mSTBoardCurrent.PileHeightBeta( mGameState.mHeightHistogram, &mGameState.mPileHeightBetaSamples );
 		}
 
 
@@ -1097,48 +1200,99 @@ namespace CPF
 			CopyOfCurrentBoard.CopyFromBoard( mGameState.mSTBoardCurrent );
 			CopyOfCurrentPiece.CopyFromPiece( mGameState.mSTPieceCurrent );
 
-			STStrategyManager::GetBestMoveOncePerPiece
+			//STStrategyManager::GetBestMoveOncePerPiece
+			//	(
+			//	CopyOfCurrentBoard,
+			//	CopyOfCurrentPiece,
+			//	mGameState.mShowNextPiece,  // Showing "Next Piece" ?
+			//	mGameState.mSTPieceNext.GetKind(),     // Next piece kind
+			//	bestRotationDelta,
+			//	bestTranslationDelta
+			//	);
+			char path[2048] = "";
+			STStrategyManager::GetBestMovePath
 				(
 				CopyOfCurrentBoard,
 				CopyOfCurrentPiece,
 				mGameState.mShowNextPiece,  // Showing "Next Piece" ?
 				mGameState.mSTPieceNext.GetKind(),     // Next piece kind
-				bestRotationDelta,
-				bestTranslationDelta
+				path
 				);
 
 
-			if (0 == mGameState.mAnimateAIMovesEnable)
+			if ( 0 == mGameState.mAnimateAIMovesEnable)
 			{
-				// ROTATE
-				int rotateCount = 0;
-				for ( rotateCount = 0; rotateCount < bestRotationDelta; rotateCount++ )
+				for ( int i = 0; i < 1024 && path[i]; ++i )
 				{
-					(*this).InputEvent_Rotate();
-				}
-
-				// TRANSLATE
-				int translateCount = 0;
-				if (bestTranslationDelta < 0)
-				{
-					for ( translateCount = 0; translateCount > bestTranslationDelta; translateCount-- )
+					bool err = false;
+					switch ( path[i] )
 					{
+					case 'l':
 						(*this).InputEvent_Left();
-					}
-				}
-				if (bestTranslationDelta > 0)
-				{
-					for ( translateCount = 0; translateCount < bestTranslationDelta; translateCount++ )
-					{
+						break;
+					case 'r':
 						(*this).InputEvent_Right();
+						break;
+					case 'd':
+						(*this).InputEvent_Down();
+						break;
+					case 'L':
+						(*this).InputEvent_ZeroLeft();
+						break;
+					case 'R':
+						(*this).InputEvent_ZeroRight();
+						break;
+					case 'D':
+						(*this).InputEvent_ZeroDown();
+						break;
+					case 'z':
+						(*this).InputEvent_Rotate();
+						break;
+					case 'c':
+						(*this).InputEvent_CounterRotate();
+						break;
+					case 'V':
+						//(*this).InputEvent_Drop();
+						break;
+					default:
+						err = true;
+						break;
 					}
+					if ( err ) break;
 				}
-
-				// DROP
 				(*this).InputEvent_Drop();
+
+				//// ROTATE
+				//int rotateCount = 0;
+				//for ( rotateCount = 0; rotateCount < bestRotationDelta; rotateCount++ )
+				//{
+				//	(*this).InputEvent_Rotate();
+				//}
+
+				//// TRANSLATE
+				//int translateCount = 0;
+				//if (bestTranslationDelta < 0)
+				//{
+				//	for ( translateCount = 0; translateCount > bestTranslationDelta; translateCount-- )
+				//	{
+				//		(*this).InputEvent_Left();
+				//	}
+				//}
+				//if (bestTranslationDelta > 0)
+				//{
+				//	for ( translateCount = 0; translateCount < bestTranslationDelta; translateCount++ )
+				//	{
+				//		(*this).InputEvent_Right();
+				//	}
+				//}
+
+				//// DROP
+				//(*this).InputEvent_Drop();
 			}
 			else
 			{
+				mGameState.mAnimateAIMoves = path;
+				mGameState.mAnimateAIMoves += "V";
 				// Set up move to be executed in the future.
 				mGameState.mAnimateAIMovesPendingRotation    = bestRotationDelta;
 				mGameState.mAnimateAIMovesPendingTranslation = bestTranslationDelta;
@@ -1188,6 +1342,59 @@ namespace CPF
 
 		int   STGame::PrivateAIAnimationProcessing( )
 		{
+			if ( mGameState.mAnimateAIMoves.empty() )
+			{
+				return 0;
+			}
+			if ( !mGameState.mAnimateAIMoves.empty() && mGameState.mIterationCountdownSeconds <= 0 )
+			{
+				bool err = false;
+				for ( ;; )
+				{
+					int curmove = mGameState.mAnimateAIMoves[0];
+					switch ( curmove )
+					{
+					case 'l':
+						(*this).InputEvent_Left();
+						break;
+					case 'r':
+						(*this).InputEvent_Right();
+						break;
+					case 'd':
+						(*this).InputEvent_Down();
+						break;
+					case 'L':
+						(*this).InputEvent_ZeroLeft();
+						break;
+					case 'R':
+						(*this).InputEvent_ZeroRight();
+						break;
+					case 'D':
+						(*this).InputEvent_ZeroDown();
+						break;
+					case 'z':
+						(*this).InputEvent_Rotate();
+						break;
+					case 'c':
+						(*this).InputEvent_CounterRotate();
+						break;
+					case 'V':
+						(*this).InputEvent_Drop();
+						break;
+					default:
+						err = true;
+						mGameState.mAnimateAIMoves = " ";
+						break;
+					}
+					mGameState.mAnimateAIMoves = std::string(mGameState.mAnimateAIMoves.c_str()+1);
+					if ( mGameState.mAnimateAIMoves.empty() || !(mGameState.mAnimateAIMoves[0] == curmove && curmove == 'd') )
+						break;
+				}
+				mGameState.mAnimateAICommandsExecuted++;
+				mGameState.mIterationCountdownSeconds = PrivateGetCountdownInitialValue();
+			}
+			return 1;
+
 			if (0 == mGameState.mAnimateAIMovesEnable)  return(0);
 
 			if ((0 == mGameState.mAnimateAIMovesPendingRotation) &&

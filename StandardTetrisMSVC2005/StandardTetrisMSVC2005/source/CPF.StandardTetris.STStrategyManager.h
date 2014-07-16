@@ -81,6 +81,15 @@ namespace CPF
 					int & bestTranslationDelta // 0 or {...,-2,-1,0,1,2,...}
 					);
 
+		public: static void GetBestMovePath
+					(
+					STBoard & currentBoard,
+					STPiece & currentPiece,
+					int nextPieceFlag, // 0 == no next piece available or known
+					int nextPieceShape, // 0 == no piece available or known
+					char path[]
+					);
+
 
 
 		};

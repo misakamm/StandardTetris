@@ -6,7 +6,7 @@
 #ifndef STRandomHeader
 #define STRandomHeader
 
-
+#include "random.h"
 
 
 namespace CPF
@@ -19,6 +19,7 @@ namespace CPF
 		class STRandom
 		{
 		private: __int64 mState;
+		private: AI::Random  mRandom;
 
 		public: STRandom ( );
 

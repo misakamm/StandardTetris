@@ -6,9 +6,10 @@
 #include "CPF.StandardTetris.STBoard.h"
 
 
-
+#include <algorithm>
 #include <memory.h> // memset(), memcpy()
 #include <stdlib.h> // rand()
+#include <math.h> // log()
 
 
 
@@ -511,6 +512,56 @@ namespace CPF
 			return( totalShadowedHoles );
 		}
 
+		// 0..(mHeight)
+		int    STBoard::PileAvgHeight( )
+		{
+			if (0 == (*this).IsValid())  
+			{
+				return( 0 );
+			}
+
+			int x = 0;
+			int y = 1024;
+			int ym[128] = {0};
+
+			// Top-down search for non-empty cell...
+			for ( x = 1; x <= mWidth; x++ )
+			{
+				ym[x] = GetColumnHeight(x);
+			}
+			for ( x = 1; x <= mWidth; x++ )
+			{
+				if ( ym[x] < ym[x-1] && ym[x] < ym[x+1] ) ym[x] = std::min(ym[x-1], ym[x+1]) - 1;
+			}
+			for ( x = 1; x <= mWidth; x++ )
+			{
+				if ( y > ym[x] ) y = ym[x];
+			}
+
+			return y; // entire board is empty
+		}
+
+		double    STBoard::PileHeightBeta( LongLong HeightHistogram[], int* Samples )
+		{
+			double
+				sum_xy = 0,
+				sum_x  = 0,
+				sum_y  = 0,
+				sum_x2 = 0;
+			int n = 0;
+			for ( int x = 1; HeightHistogram[x] >= 100; ++x )
+			{
+				sum_xy += x * log((double)HeightHistogram[x]);
+				sum_x += x;
+				sum_y += log((double)HeightHistogram[x]);
+				sum_x2 += x * x;
+				++n;
+			}
+			*Samples = 0;
+			if ( n < 2 ) return 0;
+			*Samples = n;
+			return exp( -(n * sum_xy - sum_x * sum_y) / (n * sum_x2 - sum_x * sum_x));
+		}
 
 
 		// 0..(mHeight)
@@ -924,7 +975,101 @@ namespace CPF
 			return( wellValue );
 		}
 
+		double STBoard::GetWideWells( )
+		{
+			if (0 == (*this).IsValid())
+			{
+				return( 0 );
+			}
 
+			double retWellValue = 0;
+			int x;
+			int y;
+			int* colHeight = (int*)malloc((mWidth+2) * sizeof(int)); // buffer
+
+			// init column height
+			for ( x = 1; x <= mWidth; ++x )
+			{
+				colHeight[x] = GetColumnHeight(x);
+			}
+			colHeight[0] = mHeight;
+			colHeight[mWidth+1] = mHeight;
+
+			for ( x = 1; x <= mWidth; ++x )
+			{
+				int wellSum = 0;
+
+				// above the pile, it's important
+				{
+					// init bound
+					int wellLeftBound = x - 1;
+					int wellRightBound = x + 1;
+					int maxLeftBound = wellLeftBound;
+					int maxRightBound = wellRightBound;
+					double maxWellValue = 0;
+
+					while ( wellLeftBound >= 0 && wellRightBound <= mWidth + 1 )
+					{
+						if ( colHeight[wellLeftBound] < colHeight[x] || colHeight[wellRightBound] <= colHeight[x] || wellRightBound - wellLeftBound > 6 )
+							break;
+
+						// update max, at least two more cells highter
+						if ( colHeight[wellLeftBound] > colHeight[maxLeftBound] + 2 )
+							maxLeftBound = wellLeftBound;
+
+						if ( colHeight[wellRightBound] > colHeight[maxRightBound] + 2 )
+							maxRightBound = wellRightBound;
+
+						int width = maxRightBound - maxLeftBound - 1;
+
+						// can not same size as board
+						if ( width >= mWidth ) break;
+
+						int lowerHeight = ( colHeight[maxLeftBound] < colHeight[maxRightBound] ? colHeight[maxLeftBound] : colHeight[maxRightBound] );
+						int sum = 0;
+						int ix;
+						double wellValue = 0;
+
+						for ( ix = maxLeftBound + 1; ix < maxRightBound; ++ix )
+						{
+							int height = lowerHeight - colHeight[ix] - width;
+							if ( width == 1 ) height++; // special case
+							if ( height > 0 )
+							{
+								sum += height * (height + 1) / 2;
+							}
+						}
+						wellValue = (double)sum / width; // average of the sum
+						if ( wellValue > maxWellValue ) maxWellValue = wellValue;
+
+						// expand bound. select the smaller one
+						if ( colHeight[wellLeftBound] <= colHeight[wellRightBound] ) --wellLeftBound;
+						else ++wellRightBound;
+					}
+					retWellValue += maxWellValue;
+				}
+
+				// under the pile
+				for ( y = colHeight[x] - 1; y >= 0; --y)
+				{
+					if ( y == 0 || GetCell(x, y) )
+					{
+						if ( wellSum >= 1 )
+						{
+							retWellValue += wellSum * (wellSum + 1) / 2;
+						}
+						wellSum = 0;
+					}
+					else
+					{
+						++wellSum;
+					}
+				}
+			}
+
+			free(colHeight);
+			return retWellValue;
+		}
 
 
 

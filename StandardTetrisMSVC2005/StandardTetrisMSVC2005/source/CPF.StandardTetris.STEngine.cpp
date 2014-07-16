@@ -95,8 +95,8 @@ namespace CPF
 
 			// Source strings for building ANSI and WCHAR_T strings			
 			char * applicationWindowClassNameANSI   = "StandardTetris";
-			char * applicationWindowTitleANSI       = "Standard Tetris (2007 June)";
-			char * applicationFriendlyNameANSI      = "Standard Tetris (2007 June)";
+			char * applicationWindowTitleANSI       = "Standard Tetris (2014 0715) mod by Misakamm";
+			char * applicationFriendlyNameANSI      = "Standard Tetris (2014 0715) mod by Misakamm";
 
 
 			// For ANSI, we simply copy from the zero-terminated source strings

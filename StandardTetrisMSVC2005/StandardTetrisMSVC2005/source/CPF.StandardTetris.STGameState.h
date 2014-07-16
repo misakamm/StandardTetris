@@ -13,7 +13,6 @@
 #include "CPF.StandardTetris.STPieceSequence.h"
 
 
-
 namespace CPF
 {
 	namespace StandardTetris
@@ -81,15 +80,17 @@ namespace CPF
 
 				// Updated at piece spawning or row completion
 		public: int                   mPieceHistogram [   8 ]; // Count of each piece type
-		public: int                   mHeightHistogram[ 202 ]; // Height after each landing
+		public: LongLong              mHeightHistogram[ 202 ]; // Height after each landing
+		public: double                mPileHeightBeta;
+		public: int                   mPileHeightBetaSamples;
 		public: float                 mTotalElapsedTimeSeconds;
-		public: int                   mScore;
+		public: LongLong              mScore;
 
 				// Only updated when game ends
-		public: int                   mHistoricHighScore;
+		public: LongLong              mHistoricHighScore;
 		public: int                   mHistoricHighRows;
 		public: int                   mHistoricHighPieces;
-		public: int                   mHistoricCumulativeRows;  // Used to get average: rows / games
+		public: LongLong              mHistoricCumulativeRows;  // Used to get average: rows / games
 		public: int                   mHistoricTotalGames;
 		public: int                   mHistoricRows [ 20 ]; // Past games [0]==most recent
 
@@ -115,6 +116,7 @@ namespace CPF
 		public: double     mAnimateAICommandsPerRow;
 		public: int        mAnimateAIMovesPendingRotation;
 		public: int        mAnimateAIMovesPendingTranslation;
+		public: std::string mAnimateAIMoves;
 
 
 

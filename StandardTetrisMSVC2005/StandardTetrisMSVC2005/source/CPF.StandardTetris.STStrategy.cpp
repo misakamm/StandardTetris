@@ -45,6 +45,40 @@ namespace CPF
 			bestTranslationDelta = 0;
 		}
 
+		void STStrategy::GetBestMovePath
+			(
+			STBoard & currentBoard,
+			STPiece & currentPiece,
+			int nextPieceFlag, // false == no next piece available or known
+			int nextPieceShape, // None == no piece available or known
+			char path[]
+			)
+		{
+			int bestRotationDelta = 0;
+			int bestTranslationDelta = 0;
+			GetBestMoveOncePerPiece(
+				currentBoard,
+				currentPiece,
+				nextPieceFlag,
+				nextPieceShape,
+				bestRotationDelta,
+				bestTranslationDelta
+				);
+			char* p = path;
+			for ( ; bestRotationDelta > 0; --bestRotationDelta )
+			{
+				*p++ = 'z';
+			}
+			for ( ; bestTranslationDelta < 0; ++bestTranslationDelta )
+			{
+				*p++ = 'l';
+			}
+			for ( ; bestTranslationDelta > 0; --bestTranslationDelta )
+			{
+				*p++ = 'r';
+			}
+			p[1] = 0;
+		}
 
 
 	}

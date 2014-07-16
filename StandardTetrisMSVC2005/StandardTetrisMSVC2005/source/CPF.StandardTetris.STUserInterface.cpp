@@ -520,7 +520,7 @@ namespace CPF
 						}
 						if (uwParam == VK_DOWN)
 						{
-							game.InputEvent_Drop();
+							game.InputEvent_Down();
 						}
 						if (uwParam == VK_SPACE)
 						{

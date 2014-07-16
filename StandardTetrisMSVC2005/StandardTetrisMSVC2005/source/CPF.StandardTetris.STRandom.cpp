@@ -9,7 +9,7 @@
 
 #include "CPF.StandardTetris.STMD5.h"
 
-
+#define MT19937 1
 
 
 namespace CPF
@@ -33,6 +33,12 @@ namespace CPF
 
 	void STRandom::SetState ( __int64 state )
         {
+#if MT19937
+			if ( mState == 0 )
+			{
+				mRandom.seed((unsigned)state);
+			}
+#endif
             (*this).mState = state;
         }
 
@@ -71,6 +77,24 @@ namespace CPF
             int maximum
         )
         {
+#if MT19937
+			if (minimum >= maximum)
+			{
+				return(minimum);
+			}
+			int r = maximum - minimum + 1;
+			if ( r == 7 )
+			{
+				AI::uint32 n = mRandom.rand() & 0x7;
+				while ( n >= 7 ) n = mRandom.rand() & 0x7;
+				return (int)n + minimum;
+			}
+			else
+			{
+				return mRandom.randint(r) + minimum;
+			}
+#endif
+			//--------------------------------------------------
             if (minimum == maximum)
             {
                 // Trivial case: no range at all.

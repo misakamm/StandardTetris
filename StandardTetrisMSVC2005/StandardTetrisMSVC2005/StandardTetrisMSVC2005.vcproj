@@ -117,6 +117,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
+				FavorSizeOrSpeed="1"
 				AdditionalIncludeDirectories=""
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS"
 				RuntimeLibrary="2"
@@ -361,11 +362,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\source\CPF.StandardTetris.STStrategyUserDefined.cpp"
+				RelativePath=".\source\CPF.StandardTetris.STStrategyUserDefinedDll.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\source\CPF.StandardTetris.STStrategyUserDefined.h"
+				RelativePath=".\source\CPF.StandardTetris.STStrategyUserDefinedDll.h"
 				>
 			</File>
 			<File

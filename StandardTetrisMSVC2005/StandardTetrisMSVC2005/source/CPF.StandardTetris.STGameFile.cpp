@@ -286,13 +286,13 @@ namespace CPF
 
 			for ( index = 0; index <= maxY; index++ )
 			{
-				file.WriteFormattedText( "%d\n", gameState.mHeightHistogram[ index ] );
+				file.WriteFormattedText( "%I64d\n", gameState.mHeightHistogram[ index ] );
 			}
 
 			int k = 0;
 			for ( index = (maxY+1); index < total; index++ )
 			{
-				file.WriteFormattedText( "%d ", gameState.mHeightHistogram[ index ] );
+				file.WriteFormattedText( "%I64d ", gameState.mHeightHistogram[ index ] );
 				k++;
 				if (0 == (k % 32))
 				{
@@ -309,12 +309,12 @@ namespace CPF
 			file.WriteFormattedText( "totalElapsedTimeSeconds  %8.2f\n", gameState.mTotalElapsedTimeSeconds );
 
 
-			file.WriteFormattedText( "score %d\n", gameState.mScore );
+			file.WriteFormattedText( "score %I64d\n", gameState.mScore );
 
 			file.WriteFormattedText( "historicHighScore %d\n", gameState.mHistoricHighScore );
 			file.WriteFormattedText( "historicHighRows %d\n", gameState.mHistoricHighRows );
 			file.WriteFormattedText( "historicHighPieces %d\n", gameState.mHistoricHighPieces );
-			file.WriteFormattedText( "historicCumulativeRows %d\n", gameState.mHistoricCumulativeRows );
+			file.WriteFormattedText( "historicCumulativeRows %I64d\n", gameState.mHistoricCumulativeRows );
 			file.WriteFormattedText( "historicTotalGames %d\n", gameState.mHistoricTotalGames );
 
 			file.WriteFormattedText( "\n" );
@@ -377,7 +377,7 @@ namespace CPF
 			file.WriteFormattedText( "\n" );
 			
 			total = sizeof(gameState.mHeightHistogram) / sizeof(gameState.mHeightHistogram[0]);
-			int sum = 0;
+			LongLong sum = 0;
 			for ( y = 0; y < total; y++ )
 			{
 				sum += gameState.mHeightHistogram[ y ];
@@ -755,15 +755,15 @@ namespace CPF
 			
 			file.FindTextAndFloat( "totalElapsedTimeSeconds", gameState.mTotalElapsedTimeSeconds  );
 
-			file.FindTextAndInteger( "score",                   gameState.mScore );
+			//file.FindTextAndInteger( "score",                   gameState.mScore );
 
-			file.FindTextAndInteger( "historicHighScore",       gameState.mHistoricHighScore  );
+			//file.FindTextAndInteger( "historicHighScore",       gameState.mHistoricHighScore  );
 
 			file.FindTextAndInteger( "historicHighRows",        gameState.mHistoricHighRows  );
 
 			file.FindTextAndInteger( "historicHighPieces",      gameState.mHistoricHighPieces  );
 
-			file.FindTextAndInteger( "historicCumulativeRows",  gameState.mHistoricCumulativeRows  );
+			//file.FindTextAndInteger( "historicCumulativeRows",  gameState.mHistoricCumulativeRows  );
 
 			file.FindTextAndInteger( "historicTotalGames",      gameState.mHistoricTotalGames  );  
 			

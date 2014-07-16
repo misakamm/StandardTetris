@@ -6,6 +6,7 @@
 #ifndef STPieceHeader
 #define STPieceHeader
 
+typedef __int64 LongLong;
 
 
 namespace CPF

@@ -95,7 +95,9 @@ namespace CPF
 				// Board Statistics
 		public: int    TotalOccupiedCells ( );      // 0..(mWidth * mHeight)
 		public: int    TotalShadowedHoles ( );     
+		public: int    PileAvgHeight      ( );      // 0..mHeight
 		public: int    PileMaxHeight      ( );      // 0..mHeight
+		public: double PileHeightBeta( LongLong HeightHistogram[], int* Samples );
 		public: int    PileHeightWeightedCells( ); 
 		public: int    GetColumnHeight    ( int x ); // 0..mHeight
 		public: int    SumOfWellHeights   ( );     
@@ -106,6 +108,7 @@ namespace CPF
 		public: int    GetBuriedHolesForColumn( int x ); // 0..(mHeight-1)
 		public: int    GetBlanksDownBeforeBlockedForColumn( int x, int topY ); // 0..topY
 		public: int    GetAllWellsForColumn( int x ); // 0..O(mHeight*mHeight)
+		public: double GetWideWells( ); // 0..O(mHeight*mHeight)
 
 
 		public: int IsGoalAcceptable

@@ -592,7 +592,7 @@ namespace CPF
 			
 			STOpenGLFont::FontPrint(x,y,     "level    %7d", game.GetCurrentLevel() );
 			STOpenGLFont::FontPrint(x,y+=dy, "rows     %7d", game.GetCompletedRows() );
-			STOpenGLFont::FontPrint(x,y+=dy, "score    %7d", game.GetScore() );
+			STOpenGLFont::FontPrint(x,y+=dy, "score    %7I64d", game.GetScore() );
 
 			y+=dy;
 			y+=dy;
@@ -812,14 +812,17 @@ namespace CPF
 
 			
 			glColor3f( 0.5f, 0.5f, 0.5f );
-			STOpenGLFont::FontPrint(x,y,     "O         %7d", game.GetPieceHistogramBinValue( 1 ) );
-			STOpenGLFont::FontPrint(x,y+=dy, "I         %7d", game.GetPieceHistogramBinValue( 2 ) );
-			STOpenGLFont::FontPrint(x,y+=dy, "S         %7d", game.GetPieceHistogramBinValue( 3 ) );
-			STOpenGLFont::FontPrint(x,y+=dy, "Z         %7d", game.GetPieceHistogramBinValue( 4 ) );
-			STOpenGLFont::FontPrint(x,y+=dy, "L         %7d", game.GetPieceHistogramBinValue( 5 ) );
-			STOpenGLFont::FontPrint(x,y+=dy, "J         %7d", game.GetPieceHistogramBinValue( 6 ) );
-			STOpenGLFont::FontPrint(x,y+=dy, "T         %7d", game.GetPieceHistogramBinValue( 7 ) );
-			STOpenGLFont::FontPrint(x,y+=dy, "sum       %7d", game.GetPieceHistogramSum() );
+			y-=dy;
+			//STOpenGLFont::FontPrint(x,y+=dy, "O         %7d", game.GetPieceHistogramBinValue( 1 ) );
+			//STOpenGLFont::FontPrint(x,y+=dy, "I         %7d", game.GetPieceHistogramBinValue( 2 ) );
+			//STOpenGLFont::FontPrint(x,y+=dy, "S         %7d", game.GetPieceHistogramBinValue( 3 ) );
+			//STOpenGLFont::FontPrint(x,y+=dy, "Z         %7d", game.GetPieceHistogramBinValue( 4 ) );
+			//STOpenGLFont::FontPrint(x,y+=dy, "L         %7d", game.GetPieceHistogramBinValue( 5 ) );
+			//STOpenGLFont::FontPrint(x,y+=dy, "J         %7d", game.GetPieceHistogramBinValue( 6 ) );
+			//STOpenGLFont::FontPrint(x,y+=dy, "T         %7d", game.GetPieceHistogramBinValue( 7 ) );
+			//STOpenGLFont::FontPrint(x,y+=dy, "sum       %7d", game.GetPieceHistogramSum() );
+			STOpenGLFont::FontPrint(x,y+=dy, "beta      %7.5f/%2d", game.GetPileHeightBeta(), game.GetPileHeightBetaSamples() );
+			STOpenGLFont::FontPrint(x,y+=dy, "base    %9.5f%%", game.GetHistoricRowsAtBottom() * 100 );
 
 			y+=dy;
 
@@ -878,11 +881,11 @@ namespace CPF
 			y+=dy;
 
 			string currentStrategyName = STStrategyManager::GetCurrentStrategyName();
-			STOpenGLFont::FontPrint(x,y+=dy, "AI %s", (char *)(currentStrategyName.c_str()) );
+			STOpenGLFont::FontPrint(x,y+=dy, "%s", (char *)(currentStrategyName.c_str()) );
 			y+=dy;
 
 			STOpenGLFont::FontPrint(x,y+=dy, "total games     %d", game.GetHistoricTotalGames() );
-			STOpenGLFont::FontPrint(x,y+=dy, "average rows    %d", game.GetHistoricAverageRows() );
+			STOpenGLFont::FontPrint(x,y+=dy, "average rows    %I64d", game.GetHistoricAverageRows() );
 			STOpenGLFont::FontPrint(x,y+=dy, "high rows       %d", game.GetHistoricHighRows() );
 
 			y+=dy;
@@ -899,7 +902,7 @@ namespace CPF
 				int i = 0;
 				for ( i = (n-1); i >= 0; i-- )
 				{
-					STOpenGLFont::FontPrint(x,y+=dy, "rows #%2d  %7d", (n-i), 
+					STOpenGLFont::FontPrint(x,y+=dy, "rows #%2d  %10d", (n-i), 
 						game.GetHistoricRowsBinValue( i ) );
 				}
 			}
@@ -1239,8 +1242,8 @@ namespace CPF
 								gameState.mLoadFlag      = 0;
 								if ((int)(string_FilePathAndName.length()) > 0)
 								{
-									game.LoadGameStateFromFile
-										( (char *)(string_FilePathAndName.c_str()) );            
+									//game.LoadGameStateFromFile
+									//	( (char *)(string_FilePathAndName.c_str()) );            
 								}
 							}
 							glColor3f( 1.0f, 1.0f, 0.0f );
@@ -2026,7 +2029,7 @@ namespace CPF
 
 				STGameDrawing::DrawInstructions( (int)x1, (int)y1, (int)x2, (int)y2, game );
 			}
-			else if (0 != gameState.mShowFileList)
+			else if ( gameState.mShowFileList != 0 )
 			{
 				x1 = 16;
 				y1 = 16;

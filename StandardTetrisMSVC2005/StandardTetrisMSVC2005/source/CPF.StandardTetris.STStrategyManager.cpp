@@ -15,7 +15,7 @@
 #include "CPF.StandardTetris.STPiece.h"
 #include "CPF.StandardTetris.STStrategyPierreDellacherieOnePiece2003.h"
 #include "CPF.StandardTetris.STStrategyRogerLLimaLaurentBercotSebastienBlondeelOnePiece1996.h"
-#include "CPF.StandardTetris.STStrategyUserDefined.h"
+#include "CPF.StandardTetris.STStrategyUserDefinedDll.h"
 #include "CPF.StandardTetris.STStrategyColinFaheyTwoPiece2003.h"
 
 
@@ -64,9 +64,9 @@ namespace CPF
 
 		void STStrategyManager::Initialize ( )
         {			
+			STStrategyManager::AddStrategy( (STStrategy *)(new STStrategyUserDefinedDll()) );
 			STStrategyManager::AddStrategy( (STStrategy *)(new STStrategyPierreDellacherieOnePiece2003()) );
 			STStrategyManager::AddStrategy( (STStrategy *)(new STStrategyRogerLLimaLaurentBercotSebastienBlondeelOnePiece1996()) );
-			STStrategyManager::AddStrategy( (STStrategy *)(new STStrategyUserDefined()) );
 			STStrategyManager::AddStrategy( (STStrategy *)(new STStrategyColinFaheyTwoPiece2003()) );
         }
 
@@ -211,6 +211,30 @@ namespace CPF
 			}
         }
 
+
+        void STStrategyManager::GetBestMovePath
+        (
+            STBoard & currentBoard,
+            STPiece & currentPiece,
+            int nextPieceFlag, // 0 == no next piece available or known
+            int nextPieceShape, // 0 == no piece available or known
+            char path[]
+        )
+        {
+            STStrategy * pStrategy = STStrategyManager::GetCurrentStrategy();
+
+			if ( (STStrategy *)0 != pStrategy)
+			{
+				pStrategy->GetBestMovePath
+				(
+					currentBoard,
+					currentPiece,
+					nextPieceFlag, // 0 == no next piece available or known
+					nextPieceShape, // 0 == no piece available or known
+					path
+				);
+			}
+        }
 
 
 
