@@ -1,0 +1,116 @@
+// All contents of this file written by Colin Fahey ( http://colinfahey.com )
+// 2007 June 4 ; Visit web site to check for any updates to this file.
+
+
+Miscellaneous notes relevant to building with Microsoft Visual Studio 2005 
+Express Edition
+
+
+Building this application requires installing the following:
+  "Microsoft Platform SDK for Windows Server 2003 R2"
+
+
+Please see the following web pages regarding installing and 
+  using the "Microsoft Platform SDK for Windows Server 2003 R2":
+
+    http://msdn.microsoft.com/vstudio/express/visualc/usingpsdk/
+
+    http://www.codeproject.com/useritems/FreeVS2005Win32.asp
+
+
+Here is a portion of the content of the codeproject.com web page
+  on the subject:
+  
+	Without fixing this you will get errors such as not being able 
+	to include "windows.h". Start Visual Studio and in the menu under 
+	the Projects and Solutions section in the Options dialog box, 
+	add the paths to the appropriate subsections:
+
+	Executable files: 
+	  C:\Program Files\Microsoft Platform SDK for Windows Server 2003 R2\Bin
+
+	Include files: 
+	  C:\Program Files\Microsoft Platform SDK for Windows Server 2003 R2\Include
+
+	Library files: 
+	  C:\Program Files\Microsoft Platform SDK for Windows Server 2003 R2\Lib
+
+	Be sure to check that these paths are remembered by Visual Studio! 
+	Close the view and go back there and make sure it remembers them! 
+	Also use Windows explorer to verify these directories as the SDK may 
+	have installed to a different directory. The directories may in fact be:
+
+	Executable files: 
+	  C:\Program Files\Microsoft Platform SDK\Bin
+
+	Include files: 
+	  C:\Program Files\Microsoft Platform SDK\Include
+
+	Library files: 
+	  C:\Program Files\Microsoft Platform SDK\Lib
+
+	This is a major stumbling block for many people. Verify the directories 
+	before adding them!
+	
+	
+	Default Link Libraries
+
+	Without fixing this you will get unresolved externals link errors about 
+	Windows API functions. Close Visual Studio and then edit 
+	
+	  C:\Program Files\Microsoft Visual Studio 8\VC\VCProjectDefaults\corewin_express.vsprops 
+	
+	and change 
+
+	  AdditionalDependencies="kernel32.lib"
+
+	to
+
+	  AdditionalDependencies="kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib"
+	    
+	    
+	Enable Win32 Applications
+
+	Edit the file 
+	
+	  “C:\Program Files\Microsoft Visual Studio 8\VC\VCWizards\AppWiz\Generic\Application\html\1033\AppSettings.htm". 
+	  
+	Using notepad or any plain text editor, put // in front of the following lines 
+	(as well as any other "disabled = true" lines if you want):
+  
+  
+		WIN_APP.disabled = true;
+		WIN_APP_LABEL.disabled = true; 
+		DLL_APP.disabled = true; 
+		DLL_APP_LABEL.disabled = true;
+  
+
+I think the instructions on the Microsoft web page and the codeproject.com web
+page are a little confusing about how to get to the settings for the following
+paths: "Executable files",  "Include files", "Library files".  Getting to these
+settings in MSVC2005 involves going through the following sequence of menus:
+
+		 Tools (main menu item)
+		 --> Options (drop-down menu option)
+		 --> Projects and Solutions (a tree node)
+		 --> VC++ Directories (a tree node)
+		 --> Show directories for... (a combo-box drop down
+		     with the following options, among others)
+				 Executable files
+				 Include files
+				 Library files
+
+Once each item in that combo-box is selected, there is a mechanism for 
+adding a path to a list of paths.
+
+
+
+Regarding MSVCR80D.DLL; :
+
+MSVCR80D.DLL is at the following location, but I think the manifest of my 
+application sometimes neglects to mention this location -- and so my application
+doesn't find this DLL all the time when I'm debugging.  It's very mysterious...
+
+  C:\WINDOWS\WinSxS\x86_Microsoft.VC80.DebugCRT_1fc8b3b9a1e18e3b_8.0.50727.42_x-ww_f75eb16c
+
+

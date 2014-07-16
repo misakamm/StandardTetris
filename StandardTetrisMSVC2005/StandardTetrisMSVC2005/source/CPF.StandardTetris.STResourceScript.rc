@@ -1,0 +1,7 @@
+
+// icon must have the lowest ID value
+
+#define IDR_ICON1                       101
+
+IDR_ICON1         ICON    DISCARDABLE     "CPF.StandardTetris.STIcon.ico"
+
