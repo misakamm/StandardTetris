@@ -61,7 +61,7 @@ namespace CPF
 			mHeight      = height;
 			m_pcells      = p_buffer;
 			mPieceSpawnX = (1 + (int)(width/2));
-			mPieceSpawnY = height;
+			mPieceSpawnY = height - 1;
 		}
 
 
