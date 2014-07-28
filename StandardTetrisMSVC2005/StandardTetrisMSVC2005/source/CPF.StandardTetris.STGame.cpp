@@ -1531,7 +1531,7 @@ namespace CPF
 			// Set some basic initial conditions
 			mGameState.mSTPieceBestMove.SetKind( mGameState.mSTPieceCurrent.GetKind() );
 			mGameState.mSTPieceBestMove.SetX( mGameState.mSTBoardCurrent.GetPieceSpawnX() );
-			mGameState.mSTPieceBestMove.SetY( mGameState.mSTBoardCurrent.GetPieceSpawnY() - 1);
+			mGameState.mSTPieceBestMove.SetY( mGameState.mSTBoardCurrent.GetPieceSpawnY() );
 			mGameState.mSTPieceBestMove.SetOrientation( 1 );
 
 			int bestRotationDelta    = 0;
