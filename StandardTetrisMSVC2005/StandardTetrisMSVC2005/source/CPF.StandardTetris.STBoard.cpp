@@ -549,7 +549,7 @@ namespace CPF
 				sum_y  = 0,
 				sum_x2 = 0;
 			int n = 0;
-			for ( int x = 1; HeightHistogram[x] >= 100; ++x )
+			for ( int x = 2; HeightHistogram[x] >= 100; ++x )
 			{
 				sum_xy += x * log((double)HeightHistogram[x]);
 				sum_x += x;

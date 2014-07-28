@@ -222,7 +222,7 @@ namespace CPF
 		public: double   GetHistoricRowsAtBottom  ( )
 				{
 					if ( mGameState.mHeightHistogram[200] <= 0 ) return 0;
-					return (double)( mGameState.mHeightHistogram[0] + mGameState.mHeightHistogram[1] ) / mGameState.mHeightHistogram[200] ;
+					return (double)( mGameState.mHeightHistogram[0] + mGameState.mHeightHistogram[1] + mGameState.mHeightHistogram[2] ) / mGameState.mHeightHistogram[200] ;
 				}
 		public: int   GetHistoricHighPieces( ) { return( mGameState.mHistoricHighPieces ); }
 		public: LongLong   GetHistoricCumulativeRows( ) { return( mGameState.mHistoricCumulativeRows ); }
